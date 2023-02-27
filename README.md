@@ -1,2 +1,2 @@
-# lab2_2
+# Lab2_2
 Spotify API
