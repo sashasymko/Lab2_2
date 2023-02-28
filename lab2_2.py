@@ -41,7 +41,7 @@ def get_auth_headers(token):
 
 def search_for_artists(token, artist_name):
     """
-    the fuctions searches for the right artists
+    the fuctions searches for the right artist
     """
     url = "https://api.spotify.com/v1/search"
     headers = get_auth_headers(token)
@@ -82,6 +82,17 @@ def get_songs_by_artist(token, artist_id):
     json_result = json.loads(result.content)["tracks"]
     return json_result
 
+def get_available_markets(token, song_id):
+    """
+    getting available markets from song id
+    """
+    url = f"https://api.spotify.com/v1/tracks/{song_id}"
+    headers = get_auth_headers(token)
+    result = get(url, headers=headers)
+    json_result = json.loads(result.content)
+    available_markets = json_result.get("available_markets", [])
+    return available_markets
+
 def user():
     """
     user navigation
@@ -107,10 +118,16 @@ def user():
         result = search_for_artists(token, artist_name)
         print(result["name"])
     if option == '2':
-        song, _, _= get_most_popular_song_by_artist(token, artist_name)
+        song, _, song_id = get_most_popular_song_by_artist(token, artist_name)
         print(song)
+        show_available_markets = input("Do you want to see available markets for this song? (y/n)")
+        if show_available_markets.lower() == "y":
+            available_markets = get_available_markets(token, song_id)
+            print("Available markets:")
+            for market in available_markets:
+                print(market)
     if option == '3':
-        _,  _, song_id = get_most_popular_song_by_artist(token, artist_name)
+        _, _, song_id = get_most_popular_song_by_artist(token, artist_name)
         print(song_id)
     if option == '4':
         result = search_for_artists(token, artist_name)
